@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<meta name="keywords" content="HTML, CSS, JavaScript, Node, Express" />
+<meta name="description" content="To-Do App — Node, Express" />
+<meta name="author" content="Michael F Alvarez" />
+
+<title>To-Do App — Node, Express</title>
+
+<!-- Favicon -->
+<meta name="msapplication-TileColor" content="#000000" />
+<meta name="msapplication-TileImage" content="./assets/images/icons/favicon.png" />
+<link rel="icon" type="image/x-icon" href="./assets/images/icons/favicon.ico" />
+<link rel="apple-touch-icon" sizes="" href="./assets/images/icons/favicon.png" />
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="./assets/CSS/reset.css" />
+<link rel="stylesheet" type="text/css" href="./assets/CSS/style.css" />
+<link rel="stylesheet" type="text/css" href="./assets/CSS/test.css" />
+</head>
+
+<body>
+<main class="box">
+    <div class="header">
+        <h1>To-Do</h1>
+        <p>Node - Express</p>
+    </div>
+    <form name="todo_form" class="todo-form">
+        <div class="group">
+            <input 
+                type="text"
+                name="task_inp"
+                id="task-inp"
+                class="task-inp"
+                placeholder="Enter a Task"
+                autocomplete="off"
+                autofocus
+            />
+            <input 
+                type="submit" 
+                name="submit"
+                id="submit"
+                class="submit-btn"
+                value="✢"
+            />
+        </div>
+    </form>
+    <section class="todo-list"></section>
+</main>
+<!-- Axios -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+<!-- JavaScript -->
+<script type="text/javascript" src="./assets/JS/app.js"></script>
+<noscript>Enable JS to Run App</noscript>
+</body>
+</html>

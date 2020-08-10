@@ -1,0 +1,21 @@
+html { border: 2px solid black; }
+body { border: 2px solid silver; }
+
+/* header { border: 2px solid gray; } */
+/* main { border: 2px solid gray; } */
+/* footer { border: 2px solid gray; } */
+
+/* header > .main-layout { border: 2px solid black; } */
+/* main .main-layout { border: 2px solid lightgray; } */
+/* section > .main-layout { border: 2px solid lightgray; } */
+/* footer > .main-layout { border: 2px solid black; } */
+
+/*  */
+
+/* .container { border: 2px solid black; } */
+/* .header { border: 2px solid gray; } */
+/* .todo-form { border: 2px solid gray; } */
+/* .todo-list { border: 2px solid gray; } */
+/* .task-check { border: 2px solid black; } */
+/* .task-title { border: 2px solid black; } */
+/* .task-opts { border: 2px solid black; } */

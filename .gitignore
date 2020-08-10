@@ -1,0 +1,11 @@
+# etc
+/test
+
+# dependencies
+node_modules/
+package-lock.json
+
+# misc
+.DS_Store
+/.vscode
+.env
