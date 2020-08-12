@@ -11,30 +11,59 @@ if ( !db.get('todo_list').value() ) {
 
 router.get('/view-all-tasks', (req,res) => {
     const data = db.get('todo_list').value();
-    // console.table(data)
-    res.send(data)
+    // console.table( data )
+    res.send( data )
+})
+
+router.get('/view-one-task/:id', (req,res) => {
+    const data = db.get('todo_list').find({ id : +(req.params.id) }).value();
+    // console.log( data )
+    res.send( data )
 })
 
 router.post('/create-task', (req,res) => {
-    console.log('post request')
     const info = {
         id: Date.now(), 
         task: req.body.task,
+        notes: "",
         completed: false
     };
-    const data = db.get('todo_list').push(info).write();
-    // console.table(data)
-    res.send(info)
+    
+    db.get('todo_list')
+    .push(info)
+    .write()
+    
+    // console.log( info )
+    res.send( info )
 })
 
 router.put('/update-task/:id', (req,res) => {
     console.log('update request')
+    console.log( req.body )
     res.send('update response')
 })
 
+router.patch('/adjust-task/:id', (req,res) => {
+    db.get('todo_list')
+    .find({ id : +(req.params.id) })
+    .assign({ completed : !req.body.completed })
+    .write()
+
+    const data = db.get('todo_list').find( {id : +(req.params.id)} ).value();
+
+    // console.log( data )
+    res.send( data )
+})
+
 router.delete('/remove-task/:id', (req,res) => {
-    console.log('delete request')
-    res.send('delete response')
+    const data = db.get('todo_list').find({ id : +(req.params.id) }).value();
+    
+    db.get('todo_list')
+    .remove({ id : +(req.params.id) })
+    .write()
+    
+    // console.log( data )
+    res.send( data )
 })
 
 module.exports = router;

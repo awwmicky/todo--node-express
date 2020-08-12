@@ -1,6 +1,5 @@
 const $todoForm = document.forms["todo_form"];
 const $taskInp = document.forms["todo_form"].task_inp;
-const $submitBtn = document.forms["todo_form"].submit_btn;
 const $todoList = document.querySelector('.todo-list');
 
 
@@ -13,33 +12,29 @@ const $todoList = document.querySelector('.todo-list');
 
 const empty = (elm) => elm.innerHTML = "";
 
-function appendDOM (elm,idx) {
-    const checked = (elm.completed) ? 'task-completed' : '';
-    const completed = (elm.completed) ? 'checked' : '';
+function appendTasks (elm,idx) {
+    const checked = (elm.completed) ? 'checked' : '';
     
     $todoList.insertAdjacentHTML(
         'beforeend',
         `
-        <div class="task-card" data-id="${ idx }">
-            <div class="task-check">
-                <input 
+        <div class="task-card" data-id="${ idx }" data-key="${ elm.id }">
+            <div class="task-check-box">
+                <input
                     type="checkbox" 
                     name="check" 
                     id="${ 'check-box-'+idx }"
                     class="check-box"
-                    ${ completed }
+                    ${ checked }
                 />
-                <label 
-                    for="${ 'check-box-'+idx }" 
-                    class="check-mark"
-                ></label>
+                <label
+                    for="${ 'check-box-'+idx }"
+                    class="check-mark task-header"
+                >${ elm.task }</label>
             </div>
-            <p class="task-title ${ checked }" contenteditable>
-                <span>${ elm.task }</span>
-            </p>
             <div class="task-opts">
-                <button class="edit-btn">✎</button>
-                <button class="delete-btn">×</button>
+                <button class="btn edit-btn">✎</button>
+                <button class="btn delete-btn">×</button>
             </div>
         </div>
         `
@@ -51,12 +46,12 @@ function renderData (data) {
     if (data instanceof Array) {
         console.log('Array:', data)
         empty($todoList)
-        data.map(appendDOM)
+        data.map(appendTasks)
         return;
     }
     if (data instanceof Object) {
         console.log('Object:', data)
-        appendDOM(data,"___")
+        appendTasks(data,"___")
         return;
     }
 }
@@ -68,7 +63,6 @@ $todoForm.addEventListener('submit', (e) => {
     if (input === "") return;
 
     const data = { task : input };
-
     axios.post('/api/create-task', data)
     .then(res => {
         // console.log(res.data)
@@ -81,41 +75,135 @@ $todoForm.addEventListener('submit', (e) => {
 function completeTask (e) {
     const card = e.target.parentElement.parentElement;
     const isChecked = e.target.previousElementSibling.checked;
-    const id = card.dataset.id;
-    console.log(card,id,isChecked)
-    // TodoDB.updateData(id,isChecked)
-    const text = card.querySelector('.task-title');
-    text.classList.toggle('task-completed')
+    const key = card.dataset.key;
+    
+    // console.log( card,key,isChecked )
+    const data = { completed : isChecked };
+    axios.patch(`/api/adjust-task/${key}`, data)
+    .then(res => {
+        // console.log(res.data)
+    })
+    .catch(err => console.log(err))
 }
 function editTask (e) {
     const card = e.target.parentElement.parentElement;
-    const text = card.querySelector('.task-title').textContent.trim();
-    const id = card.dataset.id;
-    console.log(card,id,text)
-    // TodoDB.updateData(id,text)
+    const key = card.dataset.key;
+
+    console.log( card,key )
+    axios.get(`/api/view-one-task/${key}`)
+    .then(res => {
+        // console.log(res.data)
+        appendTaskForm(res.data)
+    })
+    .catch(err => console.log(err))
 }
 function deleteTask (e) {
     const card = e.target.parentElement.parentElement;
-    const id = card.dataset.id;
-    console.log(card,id)
-    // TodoDB.removeData(id)
-    card.parentElement.removeChild(card)
+    const key = card.dataset.key;
+
+    // console.log(card,key)
+    axios.delete(`/api/remove-task/${key}`)
+    .then(res => {
+        // console.log(res.data)
+        card.parentElement.removeChild(card)
+    })
+    .catch(err => console.log(err))
 }
 
 $todoList.addEventListener('click', (e) => {
-    if (e.target.classList.contains('check-mark')) {
-        // console.dir(e.target)
-        completeTask(e)
-        return;
-    }
-    if (e.target.classList.contains('edit-btn')) {
-        // console.dir(e.target)
-        editTask(e)
-        return;
-    }
-    if (e.target.classList.contains('delete-btn')) {
-        // console.dir(e.target)
-        deleteTask(e)
-        return;
-    }
+    if (e.target.classList.contains('check-mark')) return completeTask(e);
+    if (e.target.classList.contains('edit-btn')) return editTask(e);
+    if (e.target.classList.contains('delete-btn')) return deleteTask(e);
+})
+
+function appendTaskForm (data) {
+    empty($todoList)
+    const description = (data.notes) ? data.notes : "";
+
+    $todoList.insertAdjacentHTML(
+        'beforeend',
+        `
+        <form name="task_form" class="task-form" data-key="${ data.id }">
+            <input 
+                type="text"
+                name="task_title"
+                id="task-title"
+                class="task-title"
+                placeholder="Title"
+                autocomplete="off"
+                value="${ data.task }"
+            />
+            <textarea
+                name="task_desc" 
+                id="task-desc"
+                class="task-desc"
+                placeholder="Description"
+                autocomplete="off"
+            >${ description }</textarea>
+            <div class="menu-opts">
+                <button 
+                    type="submit"
+                    names="submit_update"
+                    id="submit-update"
+                    class="btn submit-update"
+                >✱</button>
+                <input 
+                    type="checkbox" 
+                    name="check" 
+                    id="check-box"
+                    class="check-box"
+                    value="${ data.task }"
+                />
+                <label 
+                    for="check-box"
+                    class="btn task-mark"
+                ></label>
+                <button 
+                    class="btn task-delete"
+                >🗑</button>
+            </div>
+        </form>
+        `
+    )    
+}
+
+$todoList.addEventListener('click', (e) => {
+    if ( !document.forms["task_form"] ) return;
+
+    const $taskForm = document.forms["task_form"];
+    const $taskTitle = document.forms["task_form"].task_title;
+    const $taskDesc = document.forms["task_form"].task_desc;
+    const $taskMark = document.forms["task_form"].check;
+    const $deleteTask = document.querySelector('.task-delete');
+
+    $taskForm.addEventListener('submit', (_e) => {
+        _e.preventDefault()
+        // _e.stopPropagation()
+        
+        const key = $taskForm.dataset.key;
+        const data = {
+            task: $taskTitle.value.trim(),
+            notes: $taskDesc.value.trim(),
+            completed: $taskMark.checked
+        };
+
+        console.log( key,data )
+        // axios.put(`/api/update-task/${ key }`, data)
+        // .then(res => {
+            // console.log(res.data)
+        // })
+        // .catch(err => console.log(err))
+    })
+
+    $deleteTask.addEventListener('click', (_e) => {
+        // _e.stopPropagation()
+        
+        const key = $taskForm.dataset.key;
+        console.log( key )
+        // axios.delete(`/api/remove-task/${ key }`)
+        // .then(res => {
+        //     console.log(res.data)
+        // })
+        // .catch(err => console.log(err))
+    })
 })
