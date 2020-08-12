@@ -51,7 +51,7 @@ function renderData (data) {
     }
     if (data instanceof Object) {
         console.log('Object:', data)
-        appendTasks(data,"___")
+        appendTasks(data,data.id)
         return;
     }
 }
@@ -93,6 +93,7 @@ function editTask (e) {
     axios.get(`/api/view-one-task/${key}`)
     .then(res => {
         // console.log(res.data)
+        $todoForm.submit_post.setAttribute('disabled', "")
         appendTaskForm(res.data)
     })
     .catch(err => console.log(err))
@@ -119,6 +120,7 @@ $todoList.addEventListener('click', (e) => {
 function appendTaskForm (data) {
     empty($todoList)
     const description = (data.notes) ? data.notes : "";
+    const checked = (data.completed) ? 'checked' : "";
 
     $todoList.insertAdjacentHTML(
         'beforeend',
@@ -153,6 +155,7 @@ function appendTaskForm (data) {
                     id="check-box"
                     class="check-box"
                     value="${ data.task }"
+                    ${ checked }
                 />
                 <label 
                     for="check-box"
@@ -176,34 +179,39 @@ $todoList.addEventListener('click', (e) => {
     const $taskMark = document.forms["task_form"].check;
     const $deleteTask = document.querySelector('.task-delete');
 
-    $taskForm.addEventListener('submit', (_e) => {
-        _e.preventDefault()
-        // _e.stopPropagation()
-        
-        const key = $taskForm.dataset.key;
-        const data = {
-            task: $taskTitle.value.trim(),
-            notes: $taskDesc.value.trim(),
-            completed: $taskMark.checked
-        };
+    if ( e.target.classList.contains('submit-update') ) {
+        $taskForm.addEventListener('submit', (_e) => {
+            _e.preventDefault()
+            
+            const key = $taskForm.dataset.key;
+            const data = {
+                task: $taskTitle.value.trim(),
+                notes: $taskDesc.value.trim(),
+                completed: $taskMark.checked
+            };
 
-        console.log( key,data )
-        // axios.put(`/api/update-task/${ key }`, data)
-        // .then(res => {
-            // console.log(res.data)
-        // })
-        // .catch(err => console.log(err))
-    })
+            // console.log( key,data )
+            axios.put(`/api/update-task/${ key }`, data)
+            .then(res => {
+                // console.log(res.data)
+                $todoForm.submit_post.removeAttribute('disabled')
+                renderData(res.data)
+            })
+            .catch(err => console.log(err))
+        })
+    }
 
-    $deleteTask.addEventListener('click', (_e) => {
-        // _e.stopPropagation()
-        
-        const key = $taskForm.dataset.key;
-        console.log( key )
-        // axios.delete(`/api/remove-task/${ key }`)
-        // .then(res => {
-        //     console.log(res.data)
-        // })
-        // .catch(err => console.log(err))
-    })
+    if ( e.target.classList.contains('task-delete') ) {
+        $deleteTask.addEventListener('click', (_e) => {
+
+            const key = $taskForm.dataset.key;
+            axios.delete(`/api/remove-task/${ key }`)
+            .then(res => {
+                // console.log(res.data)
+                $todoForm.submit_post.removeAttribute('disabled')
+                renderData(res.data)
+            })
+            .catch(err => console.log(err))
+        })
+    }
 })

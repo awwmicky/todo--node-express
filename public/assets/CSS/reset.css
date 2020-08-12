@@ -114,4 +114,7 @@ noscript {
 /*  */
 
 [hidden] { display: none; }
-[disabled] { background: #000; }
+[disabled] { 
+    background: #000; 
+    color: #fff;
+}

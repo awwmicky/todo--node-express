@@ -28,15 +28,15 @@
     width: 100%;
     padding: 0.75em;
 }
-.submit-btn {
+.submit-post {
     font-size: 2rem;
     font-weight: bold;
     width: 45px;
 }
-.submit-btn:hover,
-.submit-btn:focus
+.submit-post:hover,
+.submit-post:focus
 { background: darkgray; }
-.submit-btn:active 
+.submit-post:active 
 { background: silver; }
 
 /*  */
