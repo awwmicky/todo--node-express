@@ -11,7 +11,7 @@
         class="task-title"
         placeholder="Title"
         autocomplete="off"
-        value="the task title"
+        value="this is the task title"
     />
     <textarea
         name="task_desc" 
@@ -19,7 +19,7 @@
         class="task-desc"
         placeholder="Description"
         autocomplete="off"
-    >the task description</textarea>
+    >this is the task description</textarea>
     <div class="menu-opts">
         <button 
             type="submit"
@@ -27,17 +27,23 @@
             id="submit-update"
             class="btn submit-update"
         >✱</button>
-        <input 
-            type="checkbox" 
-            name="check" 
-            id="check-box"
-            class="check-box"
-        />
-        <label 
-            for="check-box"
-            class="btn task-mark"
-        ></label>
+        <div class="btn checker">
+            <input 
+                type="checkbox" 
+                name="check" 
+                id="check-box"
+                class="check-box"
+                checked
+            />
+            <label 
+                for="check-box"
+                class="task-mark"
+            ></label>
+        </div>
         <button 
+            type="button"
+            name="task_delete"
+            id="task-delete"
             class="btn task-delete"
         >🗑</button>
     </div>
@@ -50,6 +56,7 @@
 .task-desc {}
 .menu-opts {}
 .submit-update {}
+.checker {}
 .check-box {} /* input */
 .task-mark {} /* label */
 .task-delete {}
@@ -79,23 +86,21 @@
 
 ```css
 .task-card {}
-.task-check {}
+.task-check-box {}
 .check-box {} /* input */
 .check-mark {} /* label */
-.task-title {}
-.task-opts > button {}
-/*  */
-.task-completed { 
-    text-decoration: line-through; 
-    text-decoration-color: rgba(0,0,0,0.45);
-}
+.task-header {}
+.task-opts {}
+.edit-btn {}
+.delete-btn {}
 ```
 
 ```json
 [
     {
-        "id": 10,
+        "id": 0110,
         "task": "do something",
+        "notes": "this is it okay",
         "completed": false
     }
 ]

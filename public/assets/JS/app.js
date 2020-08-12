@@ -10,9 +10,14 @@ const $todoList = document.querySelector('.todo-list');
 ))()
 
 
-const empty = (elm) => elm.innerHTML = "";
+const emptyHTML = (elm) => elm.innerHTML = "";
+const toggleAttr = (elm) => (
+    (elm.hasAttribute('disabled')) ?
+    elm.removeAttribute('disabled') :
+    elm.setAttribute('disabled', "") 
+);
 
-function appendTasks (elm,idx) {
+function appendTaskItem (elm,idx) {
     const checked = (elm.completed) ? 'checked' : '';
     
     $todoList.insertAdjacentHTML(
@@ -45,13 +50,13 @@ function renderData (data) {
     // console.log(data)
     if (data instanceof Array) {
         console.log('Array:', data)
-        empty($todoList)
-        data.map(appendTasks)
+        emptyHTML($todoList)
+        data.map(appendTaskItem)
         return;
     }
     if (data instanceof Object) {
         console.log('Object:', data)
-        appendTasks(data,data.id)
+        appendTaskItem(data, data.id)
         return;
     }
 }
@@ -89,11 +94,11 @@ function editTask (e) {
     const card = e.target.parentElement.parentElement;
     const key = card.dataset.key;
 
-    console.log( card,key )
+    // console.log( card,key )
     axios.get(`/api/view-one-task/${key}`)
     .then(res => {
         // console.log(res.data)
-        $todoForm.submit_post.setAttribute('disabled', "")
+        toggleAttr( $todoForm.submit_post )
         appendTaskForm(res.data)
     })
     .catch(err => console.log(err))
@@ -118,7 +123,7 @@ $todoList.addEventListener('click', (e) => {
 })
 
 function appendTaskForm (data) {
-    empty($todoList)
+    emptyHTML($todoList)
     const description = (data.notes) ? data.notes : "";
     const checked = (data.completed) ? 'checked' : "";
 
@@ -149,19 +154,23 @@ function appendTaskForm (data) {
                     id="submit-update"
                     class="btn submit-update"
                 >✱</button>
-                <input 
-                    type="checkbox" 
-                    name="check" 
-                    id="check-box"
-                    class="check-box"
-                    value="${ data.task }"
-                    ${ checked }
-                />
-                <label 
-                    for="check-box"
-                    class="btn task-mark"
-                ></label>
+                <div class="btn checker">
+                    <input 
+                        type="checkbox" 
+                        name="check" 
+                        id="check-box"
+                        class="check-box"
+                        ${ checked }
+                    />
+                    <label 
+                        for="check-box"
+                        class="task-mark"
+                    ></label>
+                </div>
                 <button 
+                    type="button"
+                    name="task_delete"
+                    id="task-delete"
                     class="btn task-delete"
                 >🗑</button>
             </div>
@@ -177,7 +186,7 @@ $todoList.addEventListener('click', (e) => {
     const $taskTitle = document.forms["task_form"].task_title;
     const $taskDesc = document.forms["task_form"].task_desc;
     const $taskMark = document.forms["task_form"].check;
-    const $deleteTask = document.querySelector('.task-delete');
+    const $deleteTask = document.forms["task_form"].task_delete;
 
     if ( e.target.classList.contains('submit-update') ) {
         $taskForm.addEventListener('submit', (_e) => {
@@ -194,11 +203,12 @@ $todoList.addEventListener('click', (e) => {
             axios.put(`/api/update-task/${ key }`, data)
             .then(res => {
                 // console.log(res.data)
-                $todoForm.submit_post.removeAttribute('disabled')
+                toggleAttr( $todoForm.submit_post )
                 renderData(res.data)
             })
             .catch(err => console.log(err))
         })
+        return;
     }
 
     if ( e.target.classList.contains('task-delete') ) {
@@ -208,10 +218,11 @@ $todoList.addEventListener('click', (e) => {
             axios.delete(`/api/remove-task/${ key }`)
             .then(res => {
                 // console.log(res.data)
-                $todoForm.submit_post.removeAttribute('disabled')
+                toggleAttr( $todoForm.submit_post )
                 renderData(res.data)
             })
             .catch(err => console.log(err))
         })
+        return;
     }
 })
