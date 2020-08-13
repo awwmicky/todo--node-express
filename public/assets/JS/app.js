@@ -1,5 +1,6 @@
 const $todoForm = document.forms["todo_form"];
 const $taskInp = document.forms["todo_form"].task_inp;
+const $submitTask = document.forms["todo_form"].submit_post;
 const $todoList = document.querySelector('.todo-list');
 
 
@@ -98,7 +99,7 @@ function editTask (e) {
     axios.get(`/api/view-one-task/${key}`)
     .then(res => {
         // console.log(res.data)
-        toggleAttr( $todoForm.submit_post )
+        toggleAttr( $submitTask )
         appendTaskForm(res.data)
     })
     .catch(err => console.log(err))
@@ -186,8 +187,10 @@ $todoList.addEventListener('click', (e) => {
     const $taskTitle = document.forms["task_form"].task_title;
     const $taskDesc = document.forms["task_form"].task_desc;
     const $taskMark = document.forms["task_form"].check;
+    const $updateTask = document.forms["task_form"].submit_update;
     const $deleteTask = document.forms["task_form"].task_delete;
 
+    // if ( e.target === $updateTask ) {
     if ( e.target.classList.contains('submit-update') ) {
         $taskForm.addEventListener('submit', (_e) => {
             _e.preventDefault()
@@ -203,7 +206,7 @@ $todoList.addEventListener('click', (e) => {
             axios.put(`/api/update-task/${ key }`, data)
             .then(res => {
                 // console.log(res.data)
-                toggleAttr( $todoForm.submit_post )
+                toggleAttr( $submitTask )
                 renderData(res.data)
             })
             .catch(err => console.log(err))
@@ -211,18 +214,16 @@ $todoList.addEventListener('click', (e) => {
         return;
     }
 
+    // if ( e.target === $deleteTask ) {
     if ( e.target.classList.contains('task-delete') ) {
-        $deleteTask.addEventListener('click', (_e) => {
-
-            const key = $taskForm.dataset.key;
-            axios.delete(`/api/remove-task/${ key }`)
-            .then(res => {
-                // console.log(res.data)
-                toggleAttr( $todoForm.submit_post )
-                renderData(res.data)
-            })
-            .catch(err => console.log(err))
+        const key = $taskForm.dataset.key;
+        axios.delete(`/api/remove-task/${ key }`)
+        .then(res => {
+            // console.log(res.data)
+            toggleAttr( $submitTask )
+            renderData(res.data)
         })
+        .catch(err => console.log(err))
         return;
     }
 })

@@ -9,16 +9,16 @@ if ( !db.get('todo_list').value() ) {
 }
 
 
-router.get('/view-all-tasks', (req,res) => {
+router.get('/view-all-tasks', async (req,res) => {
     
-    const data = db.get('todo_list').value();
+    const data = await db.get('todo_list').value();
     // console.table( data )
     res.send( data )
 })
 
-router.get('/view-one-task/:id', (req,res) => {
+router.get('/view-one-task/:id', async (req,res) => {
     
-    const data = db.get('todo_list')
+    const data = await db.get('todo_list')
     .find({ id : +(req.params.id) }).value();
     
     // console.log( data )
@@ -42,44 +42,50 @@ router.post('/create-task', (req,res) => {
     res.send( info )
 })
 
-router.put('/update-task/:id', (req,res) => {
+router.put('/update-task/:id', async (req,res) => {
     
-    db.get('todo_list')
-    .find({ id : +(req.params.id) })
-    .assign( req.body )
-    .write()
+    await (
+        db.get('todo_list')
+        .find({ id : +(req.params.id) })
+        .assign( req.body )
+        .write()
+    )
 
-    const data = db.get('todo_list').value();
+    const data = await db.get('todo_list').value();
     // .find({ id : +(req.params.id) }).value();
 
     // console.log(data)
     res.send(data)
 })
 
-router.patch('/adjust-task/:id', (req,res) => {
+router.patch('/adjust-task/:id', async (req,res) => {
     
-    db.get('todo_list')
-    .find({ id : +(req.params.id) })
-    .assign({ completed : !req.body.completed })
-    .write()
+    await (
+        db.get('todo_list')
+        .find({ id : +(req.params.id) })
+        .assign({ completed : !req.body.completed })
+        .write()
+    )
 
-    const data = db.get('todo_list')
+    const data = await db.get('todo_list')
     .find( {id : +(req.params.id)} ).value();
 
     // console.log( data )
     res.send( data )
 })
 
-router.delete('/remove-task/:id', (req,res) => {
+router.delete('/remove-task/:id', async (req,res) => {
     
-    // const data = db.get('todo_list')
+    // const data = await db.get('todo_list')
     // .find({ id : +(req.params.id) }).value();
     
-    db.get('todo_list')
-    .remove({ id : +(req.params.id) })
-    .write()
-    
-    const data = db.get('todo_list').value();
+    await (
+        db.get('todo_list')
+        .remove({ id : +(req.params.id) })
+        .write()
+    )
+        
+    const data = await db.get('todo_list').value();
 
     // console.log( data )
     res.send( data )
